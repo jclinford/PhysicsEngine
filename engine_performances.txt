@@ -1,0 +1,24 @@
+All tests with makeBox, makeFixedBox and RandomBodies on, NUM_BODIES = 1000 (so about 1500 total bodies)
+
+====My CLassic algorithm, no sorting====
+1core: 9.5
+2Core: 6.5
+4Core: 4.5
+
+
+=== My classis algorithm, sorting with early exit by minX ====
+1Core: 9
+2cores: 17.5
+4Cores: 35.5
+
+
+=== My classis algorithm, sorting with early exit by minX, while-loop collision check ====
+1Core: 9.5
+2Cores: 18.5
+4Cores: 37.5
+
+
+=== My classic algorithm, using QuadTree ====
+1Core: 38
+2Cores: 79
+4Cores: 84
