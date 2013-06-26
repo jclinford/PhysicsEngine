@@ -15,17 +15,18 @@ public abstract class Object
 	
 	private int id;
 	private double mass;
+	private double inverseMass;
 	private boolean hasCollided;			// True if this object has collided this loop
-	protected Vector2D Vi;					// current(initial) velocity in this frame
-	protected Vector2D Vf;					// velocity of object in next frame (final velocity)
-	protected Vector2D center;
-	protected double I;
-	protected boolean isFixed;
-	protected int process;
-	protected ObjectType type;
+	private Vector2D Vi;					// current(initial) velocity in this frame
+	private Vector2D Vf;					// velocity of object in next frame (final velocity)
+	private Vector2D center;
+	private double e;						// Restitution.. a cheap way to represent this.. 0 (no bounce) -----> 1 (elastic)
+	private double I;						// Rotation
+	private boolean isFixed;
+	private int process;
+	private ObjectType type;
 	
 	public abstract void update(long timeStep);
-	public abstract void setCenter(Vector2D l);
 	public abstract void setGeometry(RectangularShape s);
 	public abstract RectangularShape getGeometry();
 	
@@ -65,6 +66,7 @@ public abstract class Object
 	public void setMass(float m)
 	{
 		mass = m;
+		inverseMass = 1 / m;
 	}
 	public void setRotation(float i)
 	{
@@ -73,6 +75,18 @@ public abstract class Object
 	public void setFixed(boolean f)
 	{
 		isFixed = f;
+	}
+	public void setType(ObjectType t)
+	{
+		type = t;
+	}
+	public void setRestitution(double rest)
+	{
+		e = rest;
+	}
+	public void setCenter(Vector2D l)
+	{
+		center = l;
 	}
 
 	public int getId()
@@ -103,9 +117,17 @@ public abstract class Object
 	{
 		return mass;
 	}
+	public double getInverseMass()
+	{
+		return inverseMass;
+	}
 	public double getRotation()
 	{
 		return I;
+	}
+	public double getRestitution()
+	{
+		return e;
 	}
 	public boolean isFixed()
 	{

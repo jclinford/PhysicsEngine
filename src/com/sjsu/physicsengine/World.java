@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class World 
 {
-	public static final int NUM_PROCESSORS = 4;
+	public static final int NUM_PROCESSORS = 1;
 	private static ArrayList<PhysicsThread> threads;
 	private static int objectCount;
 	private static QuadTree quadTree;

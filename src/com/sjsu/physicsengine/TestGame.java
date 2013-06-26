@@ -51,9 +51,9 @@ public class TestGame
 		world = new World();
 		
 		//makeWalls();
-		makeBox();
-		makeFixedBox();
-		makeRandomBodies();
+		//makeBox();
+		//makeFixedBox();
+		//makeRandomBodies();
 		//makeHeadOn();
 		//makeOffsetHeadOn();
 		makeNewtonCradle();
@@ -211,7 +211,7 @@ public class TestGame
 		Circle b3 = new Circle();
 		b3.setCenter(new Vector2D(MAX_LOC / 2 - 40, MAX_LOC / 2));
 		b3.setVi(new Vector2D(0, 0));
-		b3.setMass(50);
+		b3.setMass(25);
 
 		world.addObjectToWorld(b1);
 		world.addObjectToWorld(b2);

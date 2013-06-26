@@ -12,13 +12,13 @@ public class Wall extends Object
 	
 	public Wall()
 	{
-		type = ObjectType.WALL;
-		geometry = new Rectangle2D.Double();
-		this.setMass(Constants.INFINITY);
-		isFixed = true;
-		Vi = new Vector2D(0, 0);
-		Vf = new Vector2D(0, 0);
-		center = new Vector2D(0, 0);
+//		type = ObjectType.WALL;
+//		geometry = new Rectangle2D.Double();
+//		this.setMass(Constants.INFINITY);
+//		isFixed = true;
+//		Vi = new Vector2D(0, 0);
+//		Vf = new Vector2D(0, 0);
+//		center = new Vector2D(0, 0);
 	}
 	
 	
@@ -36,7 +36,7 @@ public class Wall extends Object
 	@Override
 	public void setCenter(Vector2D l) 
 	{
-		this.center.set(l);
+		//this.center.set(l);
 		this.geometry.x = l.x;
 		this.geometry.y = l.y;
 	}

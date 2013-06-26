@@ -45,18 +45,13 @@ public class PhysicsThread extends Thread
 			{
 				// These two different lists both can contain the same objects, so we don't need to check for collisions
 				// if we are looking at the same object obviously. Continue to next object if we have duplicate entries
-				if (possibleCollisions.get(x).equals(objects.get(i)))
+				if (possibleCollisions.get(x).getId() == objects.get(i).getId())
 						continue;
 				
 				// Check if we have a collision
 				if (Collisions.hasCollision(objects.get(i), possibleCollisions.get(x)) == true)
 				{
 //					System.out.println(this.pNum + ":Found collision a: " + objects.get(bIndex).getId() + "  b:" + objects.get(subIndex).getId());
-					
-					// Set flag to notify that these objects have had a collision
-					objects.get(i).setHasCollided(true);
-					possibleCollisions.get(x).setHasCollided(true);
-					
 					// Resolve the collision
 					Collisions.resolveElastic(objects.get(i), possibleCollisions.get(x), pNum);
 				}

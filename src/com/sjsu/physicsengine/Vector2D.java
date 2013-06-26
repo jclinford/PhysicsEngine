@@ -88,6 +88,16 @@ public class Vector2D
 		return resultVec;
 	}
 	
+	/* divide a scalar with this vector and return the result */
+	public final Vector2D divide(double scalar)
+	{
+		Vector2D resultVec;
+		
+		resultVec = new Vector2D(this.x / scalar, this.y / scalar);
+		
+		return resultVec;
+	}
+	
 	
 	public final double getMagnitude()
 	{
@@ -98,20 +108,27 @@ public class Vector2D
 		return length;
 	}
 	
-	
-	public final double normalize() 
+	// Quicker than getMagnitured since it doesnt use sqrt
+	// returns x^2 + y^2
+	public final double getMagnitudeSquared()
 	{
+		double length;
+		
+		length = x * x + y * y;
+		
+		return length;
+	}
+	
+	
+	public final Vector2D normalize() 
+	{
+		Vector2D resultVec;
 		double magnitude = getMagnitude();
-		
-		// if almost zero, just round down
-		if (magnitude < Constants.EPSILON)
-			return 0.0;
-		
 		double invertedLength = 1.0 / magnitude;
-		x *= invertedLength;
-		y *= invertedLength;
 		
-		return magnitude;
+		resultVec = new Vector2D(this.x * invertedLength, this.y * invertedLength);
+		
+		return resultVec;
 	}
 	
 	
@@ -132,6 +149,12 @@ public class Vector2D
 	{
 		return new Vector2D(Math.abs(v.x), Math.abs(v.y));
 	}
+	// Dot this.b
+	public final double dot(Vector2D b)
+	{
+		return (this.x * b.x + this.y * b.y);
+	}
+	// a.b
 	public final static double dot(Vector2D a, Vector2D b)
 	{
 		return (a.x * b.x + a.y * b.y);
