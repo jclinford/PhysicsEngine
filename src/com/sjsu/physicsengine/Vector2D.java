@@ -26,6 +26,11 @@ public class Vector2D
 		this(copy.x, copy.y);
 	}
 	
+	
+	
+	/*
+	 * SELF METHODS THAT EFFECT THIS VECTOR
+	 */
 	public final void zeroVector()
 	{
 		this.x = 0.0;
@@ -46,17 +51,11 @@ public class Vector2D
 		return this;
 	}
 	
-	/* Return the euclidean distance (vector) between this vector and vec1 */
-	public final double euclideanDistance(Vector2D vec1)
-	{
-//		System.out.println("Vec1: " + vec1 + "  this: " + this);
-		double dx = this.x - vec1.x;
-		double dy = this.y - vec1.y;
-		
-		double dist = Math.sqrt((dx*dx + dy*dy));
-//		System.out.println("Dist: " + dist);
-		return dist;
-	}
+	
+	
+	/*
+	 * METHODS THAT RETURN A NEW VECTOR (DOESNT CHANGE OUR VECTOR ATTRIBUTES)
+	 */
 	
 	/* sum vec2 with this vector and return result */
 	public final Vector2D add(Vector2D vec2)
@@ -112,13 +111,29 @@ public class Vector2D
 	// returns x^2 + y^2
 	public final double getMagnitudeSquared()
 	{
-		double length;
+		double lengthSquare;
 		
-		length = x * x + y * y;
+		lengthSquare = x * x + y * y;
 		
-		return length;
+		return lengthSquare;
 	}
 	
+	public final static Vector2D abs(Vector2D v)
+	{
+		return new Vector2D(Math.abs(v.x), Math.abs(v.y));
+	}
+	
+	// Dot this.b
+	public final double dot(Vector2D b)
+	{
+		return (this.x * b.x + this.y * b.y);
+	}
+	
+	// a.b
+	public final static double dot(Vector2D a, Vector2D b)
+	{
+		return (a.x * b.x + a.y * b.y);
+	}
 	
 	public final Vector2D normalize() 
 	{
@@ -132,6 +147,12 @@ public class Vector2D
 	}
 	
 	
+	
+	/*
+	 * OVERRIDES
+	 * 
+	 */
+	
 	@Override
 	public final String toString() 
 	{
@@ -143,51 +164,5 @@ public class Vector2D
 	public final Vector2D clone()
 	{
 		return new Vector2D(x, y);
-	}
-	
-	public final static Vector2D abs(Vector2D v)
-	{
-		return new Vector2D(Math.abs(v.x), Math.abs(v.y));
-	}
-	// Dot this.b
-	public final double dot(Vector2D b)
-	{
-		return (this.x * b.x + this.y * b.y);
-	}
-	// a.b
-	public final static double dot(Vector2D a, Vector2D b)
-	{
-		return (a.x * b.x + a.y * b.y);
-	}
-	public final static double cross(Vector2D a, Vector2D b)
-	{
-		return (a.x * b.y - a.y * b.x);
-	}
-	public final static void cross(Vector2D a, double s, Vector2D out)
-	{
-		double tmp = -s * a.x;
-		out.x = s * a.y;
-		out.y = tmp;
-	}
-	public final static void cross(double s, Vector2D a, Vector2D out)
-	{
-		double tmp = s * a.x;
-		out.x = -s * a.y;
-		out.y = tmp;
-	}
-	public final static Vector2D cross(Vector2D a, double s)
-	{
-		return new Vector2D(s * a.y, -s * a.x);
-	}
-	
-	public final static void min(Vector2D a, Vector2D b, Vector2D out)
-	{
-		out.x = a.x < b.x ? a.x : b.x;
-		out.y = a.y < b.y ? a.y : b.y;
-	}
-	public final static void max(Vector2D a, Vector2D b, Vector2D out)
-	{
-		out.x = a.x > b.x ? a.x : b.x;
-		out.y = a.y > b.y ? a.y : b.y;
 	}
 }

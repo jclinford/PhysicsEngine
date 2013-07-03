@@ -1,20 +1,26 @@
-package com.sjsu.physicsengine;
+package com.sjsu.physicsengine.structures;
 
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sjsu.physicsengine.RigidBody;
 
 /* 
  * Quad tree, like a binary tree but with four node children
  * used to simplify collision detection
  */
+
+// Check out http://devmag.org.za/2011/02/23/quadtrees-implementation/
+
 public class QuadTree 
 {
-	private int MAX_OBJECTS = 10;
-	private int MAX_LEVELS = 10;
+	private int MAX_BODIES = 10;
+	private int MAX_LEVELS = 1000;
 	
 	private int level;
-	private ArrayList<Object> objects;
+	private ArrayList<RigidBody> myBodies;
 	private Rectangle bounds;
 	private QuadTree[] nodes;
 	
@@ -22,25 +28,43 @@ public class QuadTree
 	public QuadTree(int l, Rectangle b)
 	{
 		level = l;
-		objects = new ArrayList<Object>();
+		myBodies = new ArrayList<RigidBody>();
 		bounds = b;
 		nodes = new QuadTree[4];
 	}
 	
-	
-	
-	/* Retrieve all objects that *might* collide with the rectangle given */
-	public List retrieve(ArrayList<Object> rObjects, Object o)
+	/* Set bounds of this tree and reload its contents */
+	public void setBounds(int x, int y, int width, int height)
 	{
-		if (nodes[0] != null)
-		{
-			int index = getIndex(o);
-			if (index != -1)
-				nodes[index].retrieve(rObjects, o);
-		}
+		bounds.x = x;
+		bounds.y = y;
+		bounds.width = width;
+		bounds.height = height;
+		clear();
+		split();
+	}
+	
+	/* clear the entire tree and all sub-trees */
+	public void clear()
+	{
+//		// let the garbage collector clean up
+//		if (level == 0)
+//		{
+//			objects = new ArrayList<Object>();
+//			nodes = new QuadTree[4];
+//		}
 		
-		rObjects.addAll(objects);
-		return rObjects;
+		// below code is clear if we dont want garbage collector
+		// doing all the heavy lifting
+		myBodies.clear();
+		for (int i = 0; i < nodes.length; i++)
+		{
+			if (nodes[i] != null)
+			{
+				nodes[i].clear();
+				nodes[i] = null;
+			}
+		}
 	}
 	
 	/* split this quadTree into 4 sub-quadtrees */
@@ -57,40 +81,16 @@ public class QuadTree
 		nodes[3] = new QuadTree(level + 1, new Rectangle(x + subW, y + subH, subW, subH));
 	}
 	
-	/* clear the entire tree */
-	public void clear()
-	{
-		// let the garbage collector clean up
-		if (level == 0)
-		{
-			objects = new ArrayList<Object>();
-			nodes = new QuadTree[4];
-		}
-		
-		// below code is clear if we dont want garbage collector
-		// doing all the heavy lifting
-//		objects.clear();
-//		
-//		for (int i = 0; i < nodes.length; i++)
-//		{
-//			if (nodes[i] != null)
-//			{
-//				nodes[i].clear();
-//				nodes[i] = null;
-//			}
-//		}
-	}
-	
 	/* Gets the index for the node the object should belong to.
 	 * If -1 then object will not be part of any child nodes and must
 	 * fit into the parent node
 	 */
-	private int getIndex(Object o)
+	private int getIndex(RigidBody o)
 	{
 		int index = -1;
 		double vMidPoint = bounds.getX() + (bounds.getWidth() / 2);
 		double hMidPoint = bounds.getY() + (bounds.getHeight() / 2);
-		Rectangle r = o.getGeometry().getBounds();
+		Rectangle2D r = o.getGeometry().getBounds2D();
 		
 		// Check topQuadrants and bottomQuadrants
 		boolean topQuad = (r.getY() < hMidPoint && r.getY() + r.getHeight() < hMidPoint);
@@ -115,12 +115,26 @@ public class QuadTree
 		return index;
 	}
 	
+	/* Retrieve all objects that *might* collide with the rectangle given */
+	public List retrieve(ArrayList<RigidBody> rBodies, RigidBody o)
+	{
+		if (nodes[0] != null)
+		{
+			int index = getIndex(o);
+			if (index != -1)
+				nodes[index].retrieve(rBodies, o);
+		}
+		
+		rBodies.addAll(myBodies);
+		return rBodies;
+	}
+	
 	
 	/* 
-	 * Insert an object into the tree. If we exceed MAX_OBJECTS then
+	 * Insert an object into the tree. If we exceed MAX_BODIES then
 	 * split the node into subnodes
 	 */
-	public void insert(Object o)
+	public void insert(RigidBody o)
 	{
 		if (nodes[0] != null)
 		{
@@ -132,22 +146,22 @@ public class QuadTree
 			}
 		}
 		
-		objects.add(o);
+		myBodies.add(o);
 		
-		if (objects.size() > MAX_OBJECTS && level < MAX_LEVELS)
+		if (myBodies.size() > MAX_BODIES && level < MAX_LEVELS)
 		{
 			if (nodes[0] == null)
 				split();
 			
 			int i = 0;
-			while (i < objects.size())
+			while (i < myBodies.size())
 			{
-				int index = getIndex(objects.get(i));
+				int index = getIndex(myBodies.get(i));
 				
 				if (index != -1)
 				{
-					nodes[index].insert(objects.get(i));
-					objects.remove(i);
+					nodes[index].insert(myBodies.get(i));
+					myBodies.remove(i);
 				}
 				else
 					i++;

@@ -4,11 +4,11 @@ import java.awt.geom.RectangularShape;
 import java.awt.geom.Ellipse2D.Float;
 
 
-/* Generic object superclass */
-public abstract class Object 
+/* Generic rigid body superclass */
+public abstract class RigidBody 
 {
-	/* Object types */
-	public enum ObjectType 
+	/* Rigid body types */
+	public enum BodyType 
 	{
 		WALL, CIRCLE;
 	}
@@ -24,7 +24,7 @@ public abstract class Object
 	private double I;						// Rotation
 	private boolean isFixed;
 	private int process;
-	private ObjectType type;
+	private BodyType type;
 	
 	public abstract void update(long timeStep);
 	public abstract void setGeometry(RectangularShape s);
@@ -66,7 +66,10 @@ public abstract class Object
 	public void setMass(float m)
 	{
 		mass = m;
-		inverseMass = 1 / m;
+		if (m == Constants.INFINITY)
+			inverseMass = 0;
+		else
+			inverseMass = 1 / m;
 	}
 	public void setRotation(float i)
 	{
@@ -76,13 +79,19 @@ public abstract class Object
 	{
 		isFixed = f;
 	}
-	public void setType(ObjectType t)
+	public void setType(BodyType t)
 	{
 		type = t;
 	}
 	public void setRestitution(double rest)
 	{
 		e = rest;
+		
+		if (rest > 1.0)
+			System.out.println("Warning: Setting restitution above 1. Collisions will be gaining energy..");
+		
+		else if (rest < 0)
+			System.out.println("Warning: Setting restitution below 0");
 	}
 	public void setCenter(Vector2D l)
 	{
@@ -93,7 +102,7 @@ public abstract class Object
 	{
 		return id;
 	}
-	public ObjectType getType()
+	public BodyType getType()
 	{
 		return type;
 	}

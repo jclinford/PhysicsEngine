@@ -9,7 +9,7 @@ public class PhysicsThread extends Thread
 {
 	private int pNum;						// processor number
 	private int numThreads;					// total number of processors
-	private ArrayList<Object> objects;		// all bodies belonging to this processor
+	private ArrayList<RigidBody> bodies;		// all bodies belonging to this processor
 	private boolean isProcessing;			// flag to denote if this thread is processing
 	private World myWorld;
 	
@@ -24,7 +24,7 @@ public class PhysicsThread extends Thread
 		this.isProcessing = false;
 		this.pNum = p;
 		this.numThreads = numTs;
-		objects = new ArrayList<Object>();
+		bodies = new ArrayList<RigidBody>();
 	}
 
 	@Override
@@ -32,28 +32,30 @@ public class PhysicsThread extends Thread
 	{
 		// Start process flag. Will be false when we finish a task
 		this.isProcessing = true;
-		ArrayList<Object> possibleCollisions = new ArrayList<Object>();
+		ArrayList<RigidBody> possibleCollisions = new ArrayList<RigidBody>();
 		
 		// First check thread's bodies against its own bodies for collisions
 		// uses the quadtree to maximize fps
-		for (int i = 0; i < objects.size(); i++)
+		for (int i = 0; i < bodies.size(); i++)
 		{
 			possibleCollisions.clear();
-			myWorld.getTree().retrieve(possibleCollisions, objects.get(i));
+			myWorld.getTree().retrieve(possibleCollisions, bodies.get(i));
 			
+//			System.out.println("Possible collisions: " + possibleCollisions);
+//			System.out.println("Our objects: " + objects);
 			for (int x = 0; x < possibleCollisions.size(); x++)
 			{
 				// These two different lists both can contain the same objects, so we don't need to check for collisions
 				// if we are looking at the same object obviously. Continue to next object if we have duplicate entries
-				if (possibleCollisions.get(x).getId() == objects.get(i).getId())
+				if (possibleCollisions.get(x).getId() == bodies.get(i).getId())
 						continue;
 				
 				// Check if we have a collision
-				if (Collisions.hasCollision(objects.get(i), possibleCollisions.get(x)) == true)
+				if (Collisions.hasCollision(bodies.get(i), possibleCollisions.get(x)) == true)
 				{
 //					System.out.println(this.pNum + ":Found collision a: " + objects.get(bIndex).getId() + "  b:" + objects.get(subIndex).getId());
 					// Resolve the collision
-					Collisions.resolveElastic(objects.get(i), possibleCollisions.get(x), pNum);
+					Collisions.resolveElastic(bodies.get(i), possibleCollisions.get(x), pNum);
 				}
 			}
 		}
@@ -69,11 +71,11 @@ public class PhysicsThread extends Thread
 		// Processing steps
 		this.isProcessing = true;
 		
-		for (int j = 0; j < objects.size(); j++)
+		for (int j = 0; j < bodies.size(); j++)
 		{
 			// Move each object forward by its Vf that
 			// was calculated in run()
-			objects.get(j).update(timeStep);
+			bodies.get(j).update(timeStep);
 		}
 		
 		// Done processing steps
@@ -83,27 +85,27 @@ public class PhysicsThread extends Thread
 	/* Insert all objects belonging to this thread to the common quadTree */
 	public void insertToPublicTree()
 	{
-		for (int i = 0; i < objects.size(); i++)
-			myWorld.getTree().insert(objects.get(i));
+		for (int i = 0; i < bodies.size(); i++)
+			myWorld.getTree().insert(bodies.get(i));
 	}
 
 	/* Adds a body to this threads ownership */
-	public void addObject(Object o) 
+	public void addBody(RigidBody o) 
 	{
-		System.out.println("P" + this.pNum + ": Adding object type: " + o.getType());
-		objects.add(o);
+		System.out.println("P" + this.pNum + ": Adding rigidBody type: " + o.getType());
+		bodies.add(o);
 	}
 
 	/* removes a body from this thread */
-	public boolean removeObject(Object o) 
+	public boolean removeBody(RigidBody o) 
 	{
-		return objects.remove(o);
+		return bodies.remove(o);
 	}
 	
 	/* returns the bodies belonging to this thread */
-	public ArrayList<Object> getObjects()
+	public ArrayList<RigidBody> getBodies()
 	{
-		return objects;
+		return bodies;
 	}
 	
 	/* returns whether this thread is currently working */

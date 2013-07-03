@@ -3,13 +3,15 @@ package com.sjsu.physicsengine;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import com.sjsu.physicsengine.structures.QuadTree;
+
 /* Takes care of threads and algorithms */
 
 public class World 
 {
-	public static final int NUM_PROCESSORS = 1;
+	public static final int NUM_PROCESSORS = 4;
 	private static ArrayList<PhysicsThread> threads;
-	private static int objectCount;
+	private static int bodyCount;
 	private static QuadTree quadTree;
 	private static long lastUpdate;
 	private static long timeStep;
@@ -20,7 +22,7 @@ public class World
 		// Initialize our quadTree with our bounds of the screen
 		quadTree = new QuadTree(0, new Rectangle(0, 0, TestGame.MAX_LOC, TestGame.MAX_LOC));
 		
-		objectCount = 0;
+		bodyCount = 0;
 		threads = new ArrayList<PhysicsThread>();
 		for (int i = 0; i < NUM_PROCESSORS; i++)
 		{
@@ -33,21 +35,21 @@ public class World
 	}
 	
 	
-	public void addObjectToWorld(Object b)
+	public void addBodyToWorld(RigidBody b)
 	{
-		int tIndex = objectCount % threads.size();
+		int tIndex = bodyCount % threads.size();
 		b.setProcess(tIndex);
-		b.setId(objectCount);
+		b.setId(bodyCount);
 
-		threads.get(tIndex).addObject(b);
+		threads.get(tIndex).addBody(b);
 		
-		objectCount++;
+		bodyCount++;
 	}
 	
 	// Get the bodies belonging to thread # n
-	public static ArrayList<Object> getThreadObjects(int n)
+	public static ArrayList<RigidBody> getThreadBodies(int n)
 	{
-		return threads.get(n).getObjects();
+		return threads.get(n).getBodies();
 	}
 	
 	// Start all threads

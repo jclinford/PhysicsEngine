@@ -1,8 +1,8 @@
 package com.sjsu.physicsengine;
 import java.awt.geom.Rectangle2D;
 
-import com.sjsu.physicsengine.Object;
-import com.sjsu.physicsengine.Object.ObjectType;
+import com.sjsu.physicsengine.RigidBody;
+import com.sjsu.physicsengine.RigidBody.BodyType;
 
 /* Collision checks */
 public class Collisions
@@ -11,7 +11,7 @@ public class Collisions
 	 * Check to see if an object is colliding with another object
 	 * Returns true if we have a collision, false if we do not
 	 */
-	public static boolean hasCollision(Object a, Object b)
+	public static boolean hasCollision(RigidBody a, RigidBody b)
 	{
 		boolean hasCollision = false;
 		
@@ -21,7 +21,7 @@ public class Collisions
 		switch(a.getType())
 		{
 			case CIRCLE:
-				if (b.getType() == ObjectType.CIRCLE)
+				if (b.getType() == BodyType.CIRCLE)
 				{
 					// Circle on Circle penetration calc
 					Circle circleA = (Circle) a;
@@ -53,12 +53,12 @@ public class Collisions
 	}
 	
 	/* calculates the results of an 2d elastic collision */
-	public static void resolveElastic(Object a, Object b, int processId)
+	public static void resolveElastic(RigidBody a, RigidBody b, int processId)
 	{
 		switch (a.getType())
 		{
 			case CIRCLE:
-				if (b.getType() == ObjectType.CIRCLE)
+				if (b.getType() == BodyType.CIRCLE)
 				{
 					// Circle on Circle collision
 					resolveElasticCircleOnCircle((Circle) a, (Circle) b, processId);
@@ -72,7 +72,7 @@ public class Collisions
 	
 	/* Resolve a circle vs circle collision */
 	private static void resolveElasticCircleOnCircle(Circle a, Circle b, int processId)
-	{			
+	{
 		Vector2D Ia = new Vector2D();								// Linear Impulse of a
 		Vector2D Ib = new Vector2D();								// Linear Impulse of b
 		Vector2D Vr = (a.getVi().subtract(b.getVi()));				// The velocity of A relative to B
@@ -109,15 +109,15 @@ public class Collisions
 		Ib = MTD.normalize().multiply(ib);
 		
 		// Set the new velocities if the object belongs to the process
-		if (processId == a.getProcess())
-		{
-			System.out.println("Setting a: " + a + "  from: " + a.getVi() + "  to: "  + Ia.multiply(a.getInverseMass()));
+//		if (processId == a.getProcess())
+//		{
+//			System.out.println("Setting a: " + a + "  from: " + a.getVi() + "  to: "  + Ia.multiply(a.getInverseMass()));
 			a.addToVf(Ia.multiply(a.getInverseMass()));
-		}
-		if (processId == b.getProcess())
-		{
-			System.out.println("Setting b: " + b + "  from: " + b.getVi() + "  to: "  + Ib.multiply(b.getInverseMass()));
+//		}
+//		if (processId == b.getProcess())
+//		{
+//			System.out.println("Setting b: " + b + "  from: " + b.getVi() + "  to: "  + Ib.multiply(b.getInverseMass()));
 			b.addToVf(Ib.multiply(b.getInverseMass()));
-		}
+//		}
 	}
 }

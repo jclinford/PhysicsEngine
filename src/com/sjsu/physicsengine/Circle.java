@@ -1,14 +1,12 @@
 package com.sjsu.physicsengine;
-import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Ellipse2D.Float;
 import java.awt.geom.RectangularShape;
 
 import com.sjsu.physicsengine.Vector2D;
 
 
-/* A Standard Rigid body object */
-public class Circle extends Object
+/* A rigid body circle */
+public class Circle extends RigidBody
 {
 	private static final double DEFAULT_RADIUS = 4;
 	private static final double DEFAULT_RESTITUTION = 1;
@@ -19,7 +17,7 @@ public class Circle extends Object
 	public Circle()
 	{
 		setId(0);			// id will be set when adding into the world
-		setType(ObjectType.CIRCLE);
+		setType(BodyType.CIRCLE);
 		setVf(Constants.ZERO_VEC2D);
 		setVi(Constants.ZERO_VEC2D);
 		setFixed(false);

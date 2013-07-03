@@ -14,7 +14,7 @@ import java.util.TimerTask;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.sjsu.physicsengine.Object.ObjectType;
+import com.sjsu.physicsengine.RigidBody.BodyType;
 
 /*
  *  simple game engine to test SimplePhys
@@ -31,7 +31,7 @@ public class TestGame
 	
 	private static final int BOX_LENGTH = 20;
 	private static final int NUM_BODIES = 1000;
-	private static final int MAX_VELOCITY = 15;
+	private static final int MAX_VELOCITY = 35;
 	private static final int MAX_MASS = 100;
 	private Random generator;
 	
@@ -51,12 +51,12 @@ public class TestGame
 		world = new World();
 		
 		//makeWalls();
-		//makeBox();
-		//makeFixedBox();
-		//makeRandomBodies();
+		makeBox();
+		makeFixedBox();
+		makeRandomBodies();
 		//makeHeadOn();
 		//makeOffsetHeadOn();
-		makeNewtonCradle();
+		//makeNewtonCradle();
 	}
 
 
@@ -88,10 +88,10 @@ public class TestGame
 		bottomWall.setGeometry(new Rectangle2D.Float(MAX_LOC - 3, 2, MAX_LOC - 4, 1));
 
 
-		world.addObjectToWorld(leftWall);
-		world.addObjectToWorld(rightWall);
-		world.addObjectToWorld(topWall);
-		world.addObjectToWorld(bottomWall);
+		world.addBodyToWorld(leftWall);
+		world.addBodyToWorld(rightWall);
+		world.addBodyToWorld(topWall);
+		world.addBodyToWorld(bottomWall);
 	}
 	
 	/* create a box of bodies to act as a wall-bounding box fixed */
@@ -117,8 +117,8 @@ public class TestGame
 			b1.setCenter(loc1);
 			b2.setCenter(loc2);
 
-			world.addObjectToWorld(b1);
-			world.addObjectToWorld(b2);
+			world.addBodyToWorld(b1);
+			world.addBodyToWorld(b2);
 		}
 
 		// vertical walls
@@ -137,8 +137,8 @@ public class TestGame
 			b1.setCenter(loc1);
 			b2.setCenter(loc2);
 
-			world.addObjectToWorld(b1);
-			world.addObjectToWorld(b2);
+			world.addBodyToWorld(b1);
+			world.addBodyToWorld(b2);
 		}
 	}
 
@@ -167,8 +167,8 @@ public class TestGame
 			b1.setCenter(loc1);
 			b2.setCenter(loc2);
 
-			world.addObjectToWorld(b1);
-			world.addObjectToWorld(b2);
+			world.addBodyToWorld(b1);
+			world.addBodyToWorld(b2);
 		}
 
 		// vertical walls
@@ -189,8 +189,8 @@ public class TestGame
 			b1.setCenter(loc1);
 			b2.setCenter(loc2);
 
-			world.addObjectToWorld(b1);
-			world.addObjectToWorld(b2);
+			world.addBodyToWorld(b1);
+			world.addBodyToWorld(b2);
 		}
 	}
 	
@@ -213,9 +213,9 @@ public class TestGame
 		b3.setVi(new Vector2D(0, 0));
 		b3.setMass(25);
 
-		world.addObjectToWorld(b1);
-		world.addObjectToWorld(b2);
-		world.addObjectToWorld(b3);
+		world.addBodyToWorld(b1);
+		world.addBodyToWorld(b2);
+		world.addBodyToWorld(b3);
 	}
 
 	/* A headon collision (1d) */
@@ -237,9 +237,9 @@ public class TestGame
 		b3.setVi(new Vector2D(0, 0));
 		b3.setMass(50);
 
-		world.addObjectToWorld(b1);
-		world.addObjectToWorld(b2);
-		world.addObjectToWorld(b3);
+		world.addBodyToWorld(b1);
+		world.addBodyToWorld(b2);
+		world.addBodyToWorld(b3);
 
 	}
 
@@ -257,7 +257,7 @@ public class TestGame
 		Vector2D loc1 = new Vector2D(xLoc, yLoc1);
 		b1.setCenter(loc1);
 
-		world.addObjectToWorld(b1);
+		world.addBodyToWorld(b1);
 		
 		Circle b2 = new Circle();
 		Circle b3 = new Circle();
@@ -273,9 +273,9 @@ public class TestGame
 		b3.setCenter(new Vector2D(40, MAX_LOC/2));
 		b4.setCenter(new Vector2D(MAX_LOC - 40, MAX_LOC/2));
 		
-		world.addObjectToWorld(b2);
-		world.addObjectToWorld(b3);
-		world.addObjectToWorld(b4);
+		world.addBodyToWorld(b2);
+		world.addBodyToWorld(b3);
+		world.addBodyToWorld(b4);
 	}
 	
 	/* Make some random circles to bounce around */
@@ -297,7 +297,7 @@ public class TestGame
 			b.setMass(mass);
 
 			// add the body to physics engine
-			world.addObjectToWorld(b);
+			world.addBodyToWorld(b);
 		} 
 
 		// A single body w/ random velocity in middle
@@ -312,7 +312,7 @@ public class TestGame
 		b.setMass(mass);
 
 		// add the body to physics engine
-		world.addObjectToWorld(b);
+		world.addBodyToWorld(b);
 	}
 
 }
@@ -335,12 +335,12 @@ class DrawingPanel extends JPanel
 		// for every processor, paint all bodies associated with it
 		for (int i = 0; i < World.NUM_PROCESSORS; i++) 
 		{
-			ArrayList<Object> objects = World.getThreadObjects(i);
-			for (int j = 0; j < objects.size(); j++) 
+			ArrayList<RigidBody> bodies = World.getThreadBodies(i);
+			for (int j = 0; j < bodies.size(); j++) 
 			{
-				if (objects.get(j).getType() == ObjectType.CIRCLE)
+				if (bodies.get(j).getType() == BodyType.CIRCLE)
 				{
-					Circle c = (Circle) objects.get(j);
+					Circle c = (Circle) bodies.get(j);
 					int processId = c.getProcess();
 
 					switch(processId)

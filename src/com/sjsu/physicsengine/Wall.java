@@ -6,7 +6,7 @@ import java.awt.geom.RectangularShape;
 /* A wall is a rectangular object with infinite mass
  * and fixed in place.
  */
-public class Wall extends Object
+public class Wall extends RigidBody
 {	
 	private Rectangle2D.Double geometry;
 	
