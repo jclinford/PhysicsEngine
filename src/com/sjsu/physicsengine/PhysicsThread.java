@@ -32,14 +32,13 @@ public class PhysicsThread extends Thread
 	{
 		// Start process flag. Will be false when we finish a task
 		this.isProcessing = true;
-		ArrayList<RigidBody> possibleCollisions = new ArrayList<RigidBody>();
+		ArrayList<RigidBody> possibleCollisions;
 		
 		// First check thread's bodies against its own bodies for collisions
 		// uses the quadtree to maximize fps
 		for (int i = 0; i < bodies.size(); i++)
 		{
-			possibleCollisions.clear();
-			myWorld.getTree().retrieve(possibleCollisions, bodies.get(i));
+			possibleCollisions = myWorld.getTree().retrieveNeighbors(bodies.get(i));
 			
 //			System.out.println("Possible collisions: " + possibleCollisions);
 //			System.out.println("Our objects: " + objects);
@@ -83,10 +82,9 @@ public class PhysicsThread extends Thread
 	}
 	
 	/* Insert all objects belonging to this thread to the common quadTree */
-	public void insertToPublicTree()
+	public void insertAllToPublicTree()
 	{
-		for (int i = 0; i < bodies.size(); i++)
-			myWorld.getTree().insert(bodies.get(i));
+		myWorld.getTree().insertBodies(bodies);
 	}
 
 	/* Adds a body to this threads ownership */

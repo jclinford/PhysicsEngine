@@ -20,7 +20,7 @@ public class World
 	public World()
 	{
 		// Initialize our quadTree with our bounds of the screen
-		quadTree = new QuadTree(0, new Rectangle(0, 0, TestGame.MAX_LOC, TestGame.MAX_LOC));
+		quadTree = new QuadTree(new Rectangle(0, 0, TestGame.MAX_LOC, TestGame.MAX_LOC));
 		
 		bodyCount = 0;
 		threads = new ArrayList<PhysicsThread>();
@@ -75,10 +75,10 @@ public class World
 		// Clear all objects from the quadtree every loop,
 		// and reinsert all the objects
 		// TODO maybe parallelize this?
-		quadTree.clear();
+		quadTree.clearBodies();
 		for (int i = 0; i < threads.size(); i++)
 		{
-			threads.get(i).insertToPublicTree();
+			threads.get(i).insertAllToPublicTree();
 		}
 		
 		// Run collisions for all objects
