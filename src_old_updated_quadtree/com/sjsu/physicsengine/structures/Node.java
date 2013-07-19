@@ -20,8 +20,10 @@ public class Node
 	private static final int BOTTOM_RIGHT = 3;
 	
 	private ArrayList<RigidBody> myBodies;			// Bodies that belong to this node
-	public Node[] subNodes;						// Children nodes of this node
-	public int numSubNodes = 0;					// Number of subnodes we currently have
+	private ArrayList<RigidBody> boundaryBodies;	// Bodies that lie on the boundary of this node and another
+	private Node[] subNodes;						// Children nodes of this node
+	private int numSubNodes = 0;					// Number of subnodes we currently have
+
 	
 	public Node()
 	{
@@ -32,6 +34,7 @@ public class Node
 		maxDepth = 5;
 		
 		myBodies = new ArrayList<RigidBody>();
+		boundaryBodies = new ArrayList<RigidBody>();
 		subNodes = new Node[4];
 	}
 	
@@ -43,14 +46,39 @@ public class Node
 		maxDepth = mD;
 		
 		myBodies = new ArrayList<RigidBody>();
+		boundaryBodies = new ArrayList<RigidBody>();
 		subNodes = new Node[4];
 	}
 	
-	/* Return the bounds that this Node occupies */
+	/* GETTERS AND SETTERS */
+	
 	public Rectangle getBounds()
 	{
-		return bounds;
+		return this.bounds;
 	}
+	
+	public ArrayList<RigidBody> getBodies()
+	{	
+		ArrayList<RigidBody> allBodies = new ArrayList<RigidBody>();
+		allBodies.addAll(myBodies);
+		allBodies.addAll(boundaryBodies);
+		
+		return allBodies;
+	}
+	
+	public ArrayList<Node> getSubNodes()
+	{
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		
+		for (int i = 0; i < numSubNodes; i++)
+		{
+			nodes.add(subNodes[i]);
+		}
+		
+		return nodes;
+	}
+	
+	/* QUADTREE OPERATIONS */
 	
 	/* Insert a body to our node. If it's full split our node */
 	public void insert(RigidBody body)
@@ -59,13 +87,28 @@ public class Node
 		if (numSubNodes > 0)
 		{
 			int index = findIndex(body);
-			subNodes[index].insert(body);
+			Node node = subNodes[index];
+			
+			// If the body fits within the node's bounds we insert
+			if (body.getCenter().x >= node.getBounds().x &&
+					body.getCenter().x + body.getGeometry().getWidth() <= node.getBounds().x + node.getBounds().width &&
+					body.getCenter().y >= node.getBounds().y &&
+					body.getCenter().y + body.getGeometry().getHeight() <= node.getBounds().y + node.getBounds().height)
+				node.insert(body);
+			// Otherwise we add it to the parent node's (this node) bodies
+			else
+			{
+				boundaryBodies.add(body);
+				body.Depth = this.depth;
+			}
+			
 			return;
 		}
 		
 		/* If we are at the base node (no subnodes) then we insert here */
 		myBodies.add(body);
 		int curCharCount = myBodies.size();
+		body.Depth = this.depth;
 		
 		/* Check to see if we have too many children at this node, split if we are allowed to */
 		if ( (depth <= maxDepth) && (curCharCount > maxChildren) )
@@ -99,7 +142,7 @@ public class Node
 	public int findIndex(RigidBody body)
 	{
 		int index;
-		boolean left = (body.getCenter().x > (bounds.x + bounds.width / 2)) ? false : true;
+		boolean left = (body.getCenter().x >= (bounds.x + bounds.width / 2)) ? false : true;
 		boolean top = (body.getCenter().y > (bounds.y + bounds.height / 2)) ? false : true;
 		
 		if (left)
@@ -117,6 +160,7 @@ public class Node
 				index = BOTTOM_RIGHT;
 		}
 		
+		body.Quadrant = index;
 		return index;
 	}
 	
@@ -151,6 +195,7 @@ public class Node
 	public void clear()
 	{
 		myBodies.clear();
+		boundaryBodies.clear();
 		
 		/* Clear all subnodes */
 		for (int i = 0; i < 4; i++)

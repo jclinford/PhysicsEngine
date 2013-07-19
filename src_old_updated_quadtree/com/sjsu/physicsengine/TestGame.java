@@ -346,10 +346,14 @@ class DrawingPanel extends JPanel
 				{
 					Circle c = (Circle) bodies.get(j);
 					int processId = c.getProcess();
-
-					switch(processId)
+					int quad = c.Quadrant;
+					int depth = c.Depth;
+					
+					//switch(processId)
+					switch(quad)
 					{
 					case 0:
+						g2.setColor(new Color(30, 30, 30));
 						g2.fill(c.getGeometry());
 						break;
 					case 1:
@@ -360,8 +364,20 @@ class DrawingPanel extends JPanel
 						g2.setColor(new Color(100, 10, 25));
 						g2.fill(c.getGeometry());
 						break;
-					default:
+					case 3:
 						g2.setColor(new Color(10, 100, 25));
+						g2.fill(c.getGeometry());
+						break;
+					case 4:
+						g2.setColor(new Color(150, 100, 25));
+						g2.fill(c.getGeometry());
+						break;
+					case 5:
+						g2.setColor(new Color(0, 100, 125));
+						g2.fill(c.getGeometry());
+						break;
+					default:
+						g2.setColor(new Color(200, 255, 50));
 						g2.fill(c.getGeometry());
 						break;
 					}
@@ -370,8 +386,8 @@ class DrawingPanel extends JPanel
 			g2.setColor(new Color(0, 0, 0));
 		}
 		
-		drawQuadTree(World.getTree().getRoot(), g2);
-
+		// Draw the complete quadtree 
+		//drawQuadTree(World.getTree().getRoot(), g2);
 
 		long currentTime = System.currentTimeMillis();
 		if (currentTime > nextSecond) 
@@ -394,10 +410,11 @@ class DrawingPanel extends JPanel
 		g2.drawRect(n.getBounds().x, n.getBounds().y, n.getBounds().width, n.getBounds().height);
 		
 		// draw all children of parent node
-		for (int i = 0; i < n.numSubNodes; i++)
+		ArrayList<Node> subNodes = n.getSubNodes();
+		for (int i = 0; i < subNodes.size(); i++)
 		{
-			if (n.subNodes[i] != null)
-				drawQuadTree(n.subNodes[i], g2);
+			if (subNodes.get(i) != null)
+				drawQuadTree(subNodes.get(i), g2);
 		}
 	}
 }
@@ -423,8 +440,8 @@ class PhysicsStep extends TimerTask
 		drawingPanel.repaint();
 
 	}
-}
 
+}
 
 class ClickListener implements MouseListener
 {
@@ -462,10 +479,9 @@ class ClickListener implements MouseListener
 		Vector2D zero = new Vector2D(0, 0);
 		
 		Circle b1 = new Circle();
-		b1.setMass(1000);
+		b1.setMass(10);
 		Vector2D loc = new Vector2D(centerX, centerY);
 		b1.setCenter(loc);
-		b1.setRestitution(1);
 
 		TestGame.world.addBodyToWorld(b1);
 	}

@@ -14,8 +14,9 @@ import com.sjsu.physicsengine.RigidBody;
 
 public class QuadTree 
 {
-	private int MAX_CHILDREN = 10;					// Number of children a node has before splitting
-	private int MAX_DEPTH = 5;						// Number of levels a quadtree can go down
+	private int MAX_CHILDREN = 5;					// Number of children a node has before splitting
+	private int MAX_DEPTH = 8;						// Number of levels a quadtree can go down
+					
 	private Node root;
 	
 	
@@ -24,6 +25,11 @@ public class QuadTree
 		root = new Node(grid, 0, MAX_CHILDREN, MAX_DEPTH);
 	}
 	
+	
+	public Node getRoot()
+	{
+		return root;
+	}
 	
 	public void insertBody(RigidBody b)
 	{
@@ -50,10 +56,5 @@ public class QuadTree
 	public ArrayList<RigidBody> retrieveNeighbors(RigidBody b)
 	{
 		return root.retrieveNode(b);
-	}
-	
-	public Node getRoot()
-	{
-		return root;
 	}
 }

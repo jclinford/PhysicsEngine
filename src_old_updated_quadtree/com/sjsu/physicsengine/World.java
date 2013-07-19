@@ -12,7 +12,7 @@ public class World
 	public static final int NUM_PROCESSORS = 4;
 	private static ArrayList<PhysicsThread> threads;
 	private static int bodyCount;
-	private static QuadTree quadTree;
+	private QuadTree quadTree;
 	private static long lastUpdate;
 	private static long timeStep;
 
@@ -53,7 +53,7 @@ public class World
 	}
 	
 	// return the QuadTree
-	public static QuadTree getTree()
+	public QuadTree getTree()
 	{
 		return quadTree;
 	}
