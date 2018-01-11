@@ -1,3 +1,3 @@
 # PhysicsEngine
 
-http://scholarworks.sjsu.edu/etd_projects/343/
+Version 0.1 tests and research. Final version here: https://github.com/jclinford/Physics
